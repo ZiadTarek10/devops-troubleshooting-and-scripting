@@ -1,0 +1,25 @@
+1. How your script handles arguments and options:
+
+    The script first checks if --help is passed and shows usage instructions.
+    It makes sure there are at least two arguments: the search string and the file.
+    It uses getopts to check for options like -n (show line numbers) and -v (invert the match) and sets flags for them.
+    After that, it gets the search string and file name from the remaining arguments.
+    The script checks if the file exists and if the search string isn't empty.
+    It reads the file line by line, checks if the string is found, and applies the options like showing line numbers or inverting the match before printing the result.
+
+
+2. Supporting regex or other options like -i, -c, -l:
+
+    To support regular expressions, I could use grep's built-in regex options like -E for extended regex.
+    The -i option (for case-insensitive search) is already handled in my script with grep -i. I just need to add it to getopts to toggle it.
+    If I wanted to add -c (count the matches), I could modify the script to count how many lines match and print that number.
+    If I want -l, the script would just print the filename instead of the matching lines.
+    I would need to add these options to the getopts part of the script and change how the output is handled.
+
+
+
+3. What was hardest to implement and why:
+
+    The hardest part was dealing with the options and search string. 
+    It was tricky to make sure the options like -n and -v worked correctly, 
+    especially when they were used together. 

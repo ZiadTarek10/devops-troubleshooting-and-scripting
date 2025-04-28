@@ -14,51 +14,54 @@ fi
 show_line_numbers=false
 invert=false
 
-while [[ "$1" == -* ]]; do
-    case "$1" in
-        *n*) show_line_numbers=true ;;
-        *v*) invert=true ;;
-        *) echo "Invalid option: $1"; break ;;
+while getopts ":nv" flag; do
+    case "${flag}" in
+        n) show_line_numbers=true ;;
+        v) invert=true ;;
+        *) echo "Invalid option: -$OPTARG" >&2
+           exit 1 ;;
     esac
-    shift
 done
 
+shift $((OPTIND - 1)) 
 
 string=$1
 file=$2
 
-if [ ! -f $file ]; then
-   echo " $file does not exist."
-   exit 1
-fi
-
-if [[ -z "$string" ]]; then
+if [ -z "$string" ]; then
     echo "Missing search string!"
     exit 1
 fi
 
+if [ ! -f "$file" ]; then
+   echo " string does not exist."
+   exit 1
+fi
+
+
 line_number=0
 
-# Read the file line by line
+# Read file line-by-line
 while IFS= read -r line; do
     ((line_number++))
 
-    # Check if the line matches the search string (case insensitive)
-    if echo "$line" | grep -i -q "$search_string"; then
+    if echo "$line" | grep -i -q "$string"; then
         match=true
     else
         match=false
     fi
 
-    # Invert match if needed
     if [ "$invert" == true ]; then
-        match=false
+        if [ "$match" == true ]; then
+            match=false
+        else
+            match=true
+        fi
     fi
 
-    # Output result based on the options
     if [ "$match" == true ]; then
         if [ "$show_line_numbers" == true ]; then
-            echo "$line_number:$line"
+            echo "${line_number}:$line"
         else
             echo "$line"
         fi
